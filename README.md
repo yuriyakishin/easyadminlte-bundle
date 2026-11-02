@@ -50,7 +50,7 @@ light and dark color schemes. Install it and your admin looks like AdminLTE, wit
 In your Symfony application:
 
 ```bash
-composer require yu-symfony/easyadminlte-bundle
+composer require yu-dev/easyadminlte-bundle
 ```
 
 If Symfony Flex didn't register the bundle, add it to `config/bundles.php`:

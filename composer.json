@@ -1,5 +1,5 @@
 {
-    "name": "yu-symfony/easyadminlte-bundle",
+    "name": "yu-dev/easyadminlte-bundle",
     "type": "symfony-bundle",
     "description": "AdminLTE 4 theme for EasyAdmin (Symfony bundle)",
     "keywords": ["easyadmin", "adminlte", "admin", "theme", "bootstrap", "symfony", "bundle", "easyadmin-theme", "symfony-admin"],
