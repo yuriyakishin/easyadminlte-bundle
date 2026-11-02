@@ -1,0 +1,44 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContext #}
+{#
+    Same data handling as EasyAdmin's flash_messages.html.twig, rendered as plain Bootstrap/AdminLTE
+    alerts (EasyAdmin's ea:Alert renders the close button as an EasyAdmin button with an SVG icon,
+    which clashes with Bootstrap's own ".btn-close" styles).
+#}
+{% set ea = ea() %}
+{% trans_default_domain null != ea ? ea.i18n.translationDomain : (translation_domain is defined ? translation_domain ?? 'messages') %}
+
+{% set flash_messages = app.flashes %}
+
+{% if flash_messages|length > 0 %}
+    <div id="flash-messages">
+        {% for label, messages in flash_messages %}
+            {# Symfony's conventional "notice" and "error" labels map to Bootstrap's "info" and "danger" #}
+            {% set variant = {notice: 'info', error: 'danger'}[label] ?? label %}
+            {% for message in messages %}
+                {# flash messages can be plain strings or arrays with 'message', 'title' and 'icon' keys #}
+                {% if message is iterable %}
+                    {% set flash_icon = message.icon ?? null %}
+                    {% set flash_title = message.title is defined ? message.title|trans : null %}
+                    {% set flash_message = (message.message ?? '')|trans %}
+                {% else %}
+                    {% set flash_icon = null %}
+                    {% set flash_title = null %}
+                    {% set flash_message = message|trans %}
+                {% endif %}
+
+                <div class="alert alert-{{ variant }} alert-dismissible fade show" role="alert">
+                    {% if flash_title %}
+                        <h5 class="alert-heading">
+                            {% if flash_icon %}<twig:ea:Icon name="{{ flash_icon }}" class="me-2" />{% endif %}
+                            {{ flash_title|raw }}
+                        </h5>
+                    {% elseif flash_icon %}
+                        <twig:ea:Icon name="{{ flash_icon }}" class="me-2" />
+                    {% endif %}
+                    {{ flash_message|raw }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}

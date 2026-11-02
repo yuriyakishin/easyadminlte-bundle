@@ -1,0 +1,52 @@
+{% extends '@!EasyAdmin/crud/detail.html.twig' %}
+
+{#
+    Renders the detail page fields as AdminLTE bordered tables (label | value).
+
+    Form layout fields (fieldsets, tabs, columns; EasyAdmin always adds at least one implicit fieldset)
+    open and close their own <div> wrappers between the regular fields. They're rendered with EasyAdmin's
+    templates as usual, and each run of consecutive regular fields between them becomes its own table,
+    so a table never crosses a layout wrapper boundary.
+#}
+{% block detail_fields %}
+    {% set table_fields = [] %}
+    {% for field in entity.fields %}
+        {% if field.isFormLayoutField %}
+            {{ _self.fields_table(table_fields, entity) }}
+            {% set table_fields = [] %}
+            {{ include(ea.templatePath('crud/detail/layout_field'), {field: field}, with_context: false) }}
+        {% else %}
+            {% set table_fields = table_fields|merge([field]) %}
+        {% endif %}
+    {% endfor %}
+    {{ _self.fields_table(table_fields, entity) }}
+{% endblock detail_fields %}
+
+{% macro fields_table(fields, entity) %}
+    {% if fields is not empty %}
+        {# EasyAdmin's layout wrappers render a Bootstrap ".row" around the fields, so the table goes in a column #}
+        <div class="col-12">
+        <table class="table table-bordered detail-table">
+            <tbody>
+                {% for field in fields %}
+                    {% set has_help = field.help is ea_is_not_empty %}
+                    <tr class="field-group {{ field.cssClass }}" {% for name, value in field.htmlAttributes %}{{ name }}="{{ value|e('html') }}" {% endfor %}>
+                        {# a FALSE label hides the label cell (same rule as EasyAdmin's crud/detail/field_group.html.twig) #}
+                        {% if field.label is not same as (false) %}
+                            <th scope="row" class="field-label">
+                                <span {% if has_help %}data-bs-toggle="tooltip" data-bs-placement="auto" data-bs-animation="false" data-bs-html="true" data-bs-custom-class="ea-detail-label-tooltip" data-bs-title="{{ field.help|trans|e('html') }}"{% endif %}>
+                                    {{- field.label|trans|raw -}}
+                                </span>
+                                {% if has_help %}<i class="bi bi-info-circle text-body-secondary ms-1" aria-hidden="true"></i>{% endif %}
+                            </th>
+                        {% endif %}
+                        <td class="field-value" {% if field.label is same as (false) %}colspan="2"{% endif %}>
+                            {{ include(field.templatePath, {field: field, entity: entity}, with_context: false) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    {% endif %}
+{% endmacro %}

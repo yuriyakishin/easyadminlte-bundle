@@ -1,0 +1,46 @@
+{# @var this \Yu\EasyAdminLTEBundle\Twig\Component\Card #}
+{% set has_custom_tools = block('tools') is defined and block('tools') is not empty %}
+{% set has_footer = block('footer') is defined and block('footer') is not empty %}
+
+<div {{ attributes.defaults({class: html_classes('card mb-4', {
+    ('card-' ~ this.variant): this.variant is not null,
+    'card-outline': this.outline,
+    'collapsed-card': this.collapsed,
+})}) }}>
+    {% if this.title or has_custom_tools or this.hasTools %}
+        <div class="card-header">
+            {% if this.title %}<h3 class="card-title">{% block title %}{{ this.title }}{% endblock %}</h3>{% endif %}
+
+            {% if has_custom_tools or this.hasTools %}
+                <div class="card-tools">
+                    {% if has_custom_tools %}{{ block('tools') }}{% endif %}
+                    {% if this.collapsible %}
+                        <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" aria-label="Collapse card">
+                            <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                            <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+                        </button>
+                    {% endif %}
+                    {% if this.maximizable %}
+                        <button type="button" class="btn btn-tool" data-lte-toggle="card-maximize" aria-label="Maximize card">
+                            <i data-lte-icon="maximize" class="bi bi-fullscreen"></i>
+                            <i data-lte-icon="minimize" class="bi bi-fullscreen-exit"></i>
+                        </button>
+                    {% endif %}
+                    {% if this.removable %}
+                        <button type="button" class="btn btn-tool" data-lte-toggle="card-remove" aria-label="Remove card">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="card-body {{ this.bodyClass }}">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% if has_footer %}
+        <div class="card-footer">{{ block('footer') }}</div>
+    {% endif %}
+</div>

@@ -1,0 +1,25 @@
+{# @var this \Yu\EasyAdminLTEBundle\Twig\Component\InfoBox #}
+<div {{ attributes.defaults({class: html_classes('info-box', {('text-bg-' ~ this.variant): this.filled})}) }}>
+    {% if this.icon %}
+        <span class="info-box-icon {{ this.filled ? '' : 'text-bg-' ~ this.variant }} shadow-sm">
+            <i class="{{ this.icon }}" aria-hidden="true"></i>
+        </span>
+    {% endif %}
+
+    <div class="info-box-content">
+        <span class="info-box-text">{% block content %}{{ this.text }}{% endblock %}</span>
+        <span class="info-box-number">
+            {{- this.number -}}
+            {% if this.unit %} <small>{{ this.unit }}</small>{% endif %}
+        </span>
+
+        {% if this.progress is not null %}
+            <div class="progress" role="progressbar" aria-valuenow="{{ this.progress }}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar {{ this.filled ? '' : 'bg-' ~ this.variant }}" style="width: {{ this.progress }}%"></div>
+            </div>
+        {% endif %}
+        {% if this.description %}
+            <span class="progress-description">{{ this.description }}</span>
+        {% endif %}
+    </div>
+</div>

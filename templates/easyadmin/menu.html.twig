@@ -1,0 +1,74 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{#
+    AdminLTE 4 sidebar menu (ul.sidebar-menu > li.nav-item > a.nav-link). Submenus are handled by
+    AdminLTE's treeview plugin (data-lte-toggle="treeview"), not by EasyAdmin's app.js.
+    Keeps EasyAdmin's "main_menu_before", "main_menu" and "main_menu_after" blocks.
+#}
+<nav class="mt-2" aria-label="Main navigation">
+    {% block main_menu_before %}{% endblock %}
+
+    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="true" id="navigation">
+        {% block main_menu %}
+            {% for menuItem in ea().mainMenu.items %}
+                {% if menuItem.isMenuSection %}
+                    {{ _self.render_section(menuItem) }}
+                {% elseif menuItem.type != constant('EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\MenuItemDto::TYPE_SUBMENU') or menuItem.hasSubItems %}
+                    {# a submenu can be empty when the current user can't see any of its items #}
+                    {{ _self.render_item(menuItem) }}
+                {% endif %}
+            {% endfor %}
+        {% endblock main_menu %}
+    </ul>
+
+    {% block main_menu_after %}{% endblock %}
+</nav>
+
+{% macro render_section(menuItem) %}
+    <li class="nav-header text-uppercase {{ menuItem.cssClass }}" {% for name, value in menuItem.htmlAttributes %} {{ name }}="{{ value|e('html') }}"{% endfor %}>
+        {%- if menuItem.icon %}<twig:ea:Icon name="{{ menuItem.icon }}" class="me-1" />{% endif -%}
+        {{ menuItem.label|trans|raw }}
+        {%- if menuItem.hasVisibleBadge %} {{ _self.render_badge(menuItem.badge) }}{% endif -%}
+    </li>
+{% endmacro %}
+
+{% macro render_item(menuItem) %}
+    {% set has_submenu = menuItem.hasSubItems %}
+    {% set is_open = has_submenu and (menuItem.isExpanded or menuItem.keepsOpen) %}
+
+    <li class="nav-item {{ is_open ? 'menu-open' }}">
+        <a href="{{ has_submenu ? '#' : menuItem.linkUrl }}"
+           class="nav-link {{ menuItem.isSelected ? 'active' }} {{ menuItem.cssClass }}"
+           {%- if menuItem.isSelected and not has_submenu %} aria-current="page"{% endif %}
+           {%- if not has_submenu and menuItem.linkTarget %} target="{{ menuItem.linkTarget }}"{% endif %}
+           {%- if not has_submenu and menuItem.linkRel %} rel="{{ menuItem.linkRel }}"{% endif %}
+           {%- for name, value in menuItem.htmlAttributes %} {{ name }}="{{ value|e('html') }}"{% endfor %}>
+            {% if menuItem.icon %}<twig:ea:Icon name="{{ menuItem.icon }}" class="nav-icon" />{% endif %}
+            <p>
+                {{ menuItem.label|trans|raw }}
+                {% if menuItem.hasVisibleBadge %}{{ _self.render_badge(menuItem.badge) }}{% endif %}
+                {% if has_submenu %}<i class="nav-arrow bi bi-chevron-right" aria-hidden="true"></i>{% endif %}
+            </p>
+        </a>
+
+        {% if has_submenu %}
+            <ul class="nav nav-treeview">
+                {% for menuSubItem in menuItem.subItems %}
+                    {% if menuSubItem.isMenuSection %}
+                        {{ _self.render_section(menuSubItem) }}
+                    {% else %}
+                        {{ _self.render_item(menuSubItem) }}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+{% endmacro %}
+
+{% macro render_badge(badge) %}
+    {%- set variant = badge.cssClass|replace({'badge-': ''}) -%}
+    <span class="nav-badge badge {{ variant ? 'text-bg-' ~ variant }} me-3"
+        {%- if badge.htmlStyle %} style="{{ badge.htmlStyle }}"{% endif %}
+        {%- for name, value in badge.htmlAttributes %} {{ name }}="{{ value|e('html') }}"{% endfor %}>
+        {{- badge.content -}}
+    </span>
+{%- endmacro %}

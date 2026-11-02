@@ -1,0 +1,15 @@
+{# @var this \Yu\EasyAdminLTEBundle\Twig\Component\SmallBox #}
+<div {{ attributes.defaults({class: 'small-box text-bg-' ~ this.variant}) }}>
+    <div class="inner">
+        <h3>{% block value %}{{ this.value }}{% endblock %}</h3>
+        <p>{% block content %}{{ this.text }}{% endblock %}</p>
+    </div>
+    {% if this.icon %}
+        <i class="{{ this.icon }} small-box-icon" aria-hidden="true"></i>
+    {% endif %}
+    {% if this.url %}
+        <a href="{{ this.url }}" class="small-box-footer {{ this.variant in ['light', 'warning'] ? 'link-dark' : 'link-light' }} link-underline-opacity-0 link-underline-opacity-50-hover">
+            {{ this.linkLabel }} <i class="bi bi-arrow-right-circle" aria-hidden="true"></i>
+        </a>
+    {% endif %}
+</div>

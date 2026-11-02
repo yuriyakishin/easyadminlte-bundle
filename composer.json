@@ -1,0 +1,31 @@
+{
+    "name": "yu-symfony/easyadminlte-bundle",
+    "type": "symfony-bundle",
+    "description": "AdminLTE 4 theme for EasyAdmin (Symfony bundle)",
+    "keywords": ["easyadmin", "adminlte", "admin", "theme", "bootstrap", "symfony", "bundle", "easyadmin-theme", "symfony-admin"],
+    "homepage": "https://github.com/yuriyakishin/easyadminlte-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yuriy Akishin",
+            "email": "yuriy.akishin@gmail.com",
+            "homepage": "https://github.com/yuriyakishin"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "easycorp/easyadmin-bundle": "^5.6"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Yu\\EasyAdminLTEBundle\\": "src/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/yuriyakishin/easyadminlte-bundle/issues",
+        "source": "https://github.com/yuriyakishin/easyadminlte-bundle"
+    }
+}

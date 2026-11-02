@@ -1,0 +1,48 @@
+{# @var paginator \EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator #}
+{#
+    AdminLTE pagination (ul.pagination.pagination-sm, like AdminLTE's card footers), always rendered,
+    even with a single page. Same rules as EasyAdmin's crud/paginator.html.twig: when results are hidden
+    because of missing permissions, 'render_detailed_pagination' is FALSE and both the results counter
+    and the page numbers are hidden.
+#}
+{% set render_detailed_pagination = render_detailed_pagination ?? true %}
+{% set current_page = paginator.currentPage %}
+{% set is_rtl = ea().i18n.textDirection == 'rtl' %}
+
+<div class="list-pagination d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div class="list-pagination-counter text-body-secondary">
+        {%- if render_detailed_pagination -%}
+            {{ 'paginator.results'|trans({'%count%': paginator.numResults|format}, 'EasyAdminBundle')|raw }}
+        {%- endif -%}
+    </div>
+
+    <nav aria-label="{{ 'paginator.label'|trans({}, 'EasyAdminBundle') }}">
+        <ul class="pagination pagination-sm m-0">
+            <li class="page-item {{ not paginator.hasPreviousPage ? 'disabled' }}">
+                <a class="page-link" href="{{ paginator.hasPreviousPage ? paginator.generateUrlForPage(paginator.previousPage) : '#' }}"
+                   {%- if paginator.hasPreviousPage %} rel="prev"{% else %} aria-disabled="true" tabindex="-1"{% endif %}
+                   aria-label="{{ 'paginator.previous'|trans({}, 'EasyAdminBundle') }}">{{ is_rtl ? '»' : '«' }}</a>
+            </li>
+
+            {% if render_detailed_pagination %}
+                {% for page in paginator.pageRange %}
+                    {% if page is null %}
+                        <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                    {% else %}
+                        <li class="page-item {{ page == current_page ? 'active' }}">
+                            <a class="page-link" href="{{ paginator.generateUrlForPage(page) }}"{% if page == current_page %} aria-current="page"{% endif %}>{{ page }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <li class="page-item active"><span class="page-link" aria-current="page">{{ current_page }}</span></li>
+            {% endif %}
+
+            <li class="page-item {{ not paginator.hasNextPage ? 'disabled' }}">
+                <a class="page-link" href="{{ paginator.hasNextPage ? paginator.generateUrlForPage(paginator.nextPage) : '#' }}"
+                   {%- if paginator.hasNextPage %} rel="next"{% else %} aria-disabled="true" tabindex="-1"{% endif %}
+                   aria-label="{{ 'paginator.next'|trans({}, 'EasyAdminBundle') }}">{{ is_rtl ? '«' : '»' }}</a>
+            </li>
+        </ul>
+    </nav>
+</div>

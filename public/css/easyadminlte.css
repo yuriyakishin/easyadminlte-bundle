@@ -1,0 +1,379 @@
+/*
+ * EasyAdmin assigns all its styles to cascade layers ("ea-overrides, vendor, ea", see EasyAdmin's
+ * assets/css/layers.css) so that any unlayered application CSS always overrides them. AdminLTE is
+ * loaded into its own "adminlte" layer declared after "ea": AdminLTE wins over EasyAdmin's Bootstrap
+ * and theme styles, and unlayered application CSS still wins over everything.
+ */
+@layer ea-overrides, vendor, ea, adminlte;
+
+@import url("adminlte.min.css") layer(adminlte);
+/* AdminLTE's icon font, used by the layout (header, sidebar, login); MIT, see ../bootstrap-icons/LICENSE */
+@import url("../bootstrap-icons/bootstrap-icons.min.css") layer(adminlte);
+
+/* AdminLTE's font (shipped with the bundle instead of loaded from a CDN); SIL OFL 1.1, see ../fonts/source-sans-3/LICENSE */
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("../fonts/source-sans-3/source-sans-3-cyrillic-ext-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("../fonts/source-sans-3/source-sans-3-cyrillic-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("../fonts/source-sans-3/source-sans-3-latin-ext-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("../fonts/source-sans-3/source-sans-3-latin-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* fixes for EasyAdmin styles that leak into the AdminLTE markup (same layer, so these win by order) */
+@layer adminlte {
+    /* EasyAdmin hides its settings dropdown on small screens (it shows a copy in its responsive header) */
+    .app-header .dropdown-settings {
+        display: list-item;
+        list-style: none;
+    }
+
+    /* EasyAdmin's ".content-header-title .title" uses its own (larger) heading sizes */
+    .app-content-header .content-header-title .title {
+        font-size: 1.75rem;
+        font-weight: 400;
+        line-height: 1.2;
+        padding-inline-end: 0;
+    }
+
+    /* EasyAdmin icons are <span class="icon"><svg/></span> instead of AdminLTE's <i class="bi ...">:
+       size the SVGs like the font icons they replace */
+    .app-wrapper .icon svg,
+    .login-box .icon svg {
+        block-size: 1em;
+        inline-size: 1em;
+        vertical-align: -0.125em;
+    }
+
+    /* user menu without an avatar URL: a Bootstrap Icons glyph in place of AdminLTE's <img class="user-image"> */
+    .app-header .user-menu i.user-image {
+        font-size: 1.5rem;
+        line-height: 1;
+        vertical-align: middle;
+    }
+
+    .app-header .user-menu .user-header i.user-image {
+        display: block;
+        font-size: 5rem;
+    }
+
+    /* light/dark toggle: show the moon in the light scheme and the sun in the dark one */
+    body:not([data-bs-theme=dark]) .color-scheme-icon-dark,
+    body[data-bs-theme=dark] .color-scheme-icon-light {
+        display: none;
+    }
+
+    /* the page actions are right-aligned next to the title, like AdminLTE's breadcrumb */
+    .app-content-header .page-actions:empty {
+        display: none !important;
+    }
+
+    /* EasyAdmin redefines Bootstrap variables (font, sizes, radii, theme colors) on
+       ":root, [data-bs-theme=dark], [data-bs-theme=light]". AdminLTE restores them for ":root" and "light"
+       only, so in the dark scheme (and in the dark sidebar) EasyAdmin's values would win: restore AdminLTE's */
+    [data-bs-theme=dark] {
+        --bs-body-font-family: var(--bs-font-sans-serif);
+        --bs-body-font-size: 1rem;
+        --bs-body-font-weight: 400;
+        --bs-border-radius: 0.375rem;
+        --bs-border-radius-sm: 0.25rem;
+        --bs-border-radius-lg: 0.5rem;
+        --bs-border-width: 1px;
+        --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        --bs-link-decoration: underline;
+        --bs-primary: #0d6efd;
+        --bs-secondary: #6c757d;
+        --bs-success: #198754;
+        --bs-info: #0dcaf0;
+        --bs-warning: #ffc107;
+        --bs-danger: #dc3545;
+        --bs-danger-rgb: 220, 53, 69;
+    }
+
+    body.ea {
+        font-family: var(--bs-body-font-family);
+    }
+
+    /* EasyAdmin paints buttons with its own gradient on top of the background color */
+    .app-wrapper .btn,
+    .login-box .btn {
+        background-image: none;
+    }
+
+    /* datagrid column headers are sort links: EasyAdmin styles them as plain text, AdminLTE's reboot underlines links */
+    .datagrid thead th a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    /* EasyAdmin sets "padding: 0" on the header cells and pads the sort link inside them instead;
+       AdminLTE pads the cells, so both paddings add up and shift the headers right of their column values */
+    .datagrid > thead > tr > th > a,
+    .datagrid > thead > tr > th > span,
+    .datagrid > thead > tr > th > .form-check > span {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* EasyAdmin's "..." row actions toggle has no dropdown caret */
+    .dropdown-toggle-hidden-marker::after {
+        display: none;
+    }
+
+    /* the index table goes edge to edge inside the card (like AdminLTE's tables in ".card-body.p-0") */
+    .app-content .card > .card-body.p-0 .datagrid {
+        margin-bottom: 0;
+    }
+
+    /* the paginator below the index table looks like AdminLTE's ".card-footer" */
+    .app-content .card > .card-body.p-0 > .content-panel-footer {
+        background-color: var(--bs-card-cap-bg);
+        border-top: var(--bs-card-border-width) solid var(--bs-card-border-color);
+        padding: 0.75rem 1.25rem;
+    }
+
+    /* EasyAdmin sizes all datagrid columns alike, so the checkbox and actions columns take as much room as
+       the data columns; AdminLTE's tables keep these "service" columns as narrow as their contents */
+    .datagrid > thead > tr > th:first-child:has(.form-batch-checkbox-all),
+    .datagrid > tbody > tr > td.batch-actions-selector,
+    .datagrid > thead > tr > th.actions-as-dropdown-table-head,
+    .datagrid > tbody > tr > td.actions {
+        white-space: nowrap;
+        width: 1%;
+    }
+
+    /* AdminLTE draws every <fieldset> as a bordered box ("fieldset { padding: 1rem; border: 1px solid }"),
+       but EasyAdmin forms use a bare <fieldset> as a wrapper: inside the AdminLTE card that's a second border */
+    .app-content .card > .card-body fieldset {
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* links inside datagrid cells (e.g. associations): EasyAdmin shows them without underline */
+    .datagrid > tbody td a:not(.btn) {
+        text-decoration: none;
+    }
+
+    /* EasyAdmin fixes the addon height (block-size: 30px), AdminLTE stretches it to the input height */
+    .app-wrapper .input-group-text,
+    .login-box .input-group-text {
+        block-size: auto;
+    }
+
+    /* EasyAdmin buttons are <a class="btn"><span class="icon"/><span class="btn-label"/></a>: EasyAdmin lays
+       them out with inline-flex, AdminLTE's ".btn" is inline-block, which stacks the icon above the label */
+    .app-wrapper .btn:has(> .icon) {
+        align-items: center;
+        display: inline-flex;
+        gap: 0.375rem;
+    }
+
+    /* form fields: EasyAdmin fixes their height (block-size: 30px) and uses small, semi-bold, colored labels;
+       AdminLTE uses Bootstrap's default control height and plain labels */
+    .app-content .form-widget input.form-control,
+    .app-content .form-widget .form-select:not([multiple]) {
+        block-size: auto;
+    }
+
+    /* TomSelect (autocomplete/association fields): same height as the other controls */
+    .app-content .form-widget .ts-wrapper.single .ts-control {
+        align-items: center;
+        block-size: auto;
+        min-block-size: calc(1.5em + 0.75rem + calc(var(--bs-border-width) * 2));
+        padding-block: 0.375rem;
+    }
+
+    .app-content .form-group > .form-control-label,
+    .app-content .form-group > label,
+    .app-content .form-group > legend.col-form-label {
+        color: inherit;
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    /* compound fields (e.g. a field rendered as tabs) are labelled with a <legend> */
+    .app-content .form-group > legend.col-form-label {
+        margin-bottom: 0.5rem;
+        padding: 0;
+    }
+
+    /* secondary page/form actions as outline buttons, so the primary action stands out like in AdminLTE's forms */
+    .app-main .page-actions .btn-secondary,
+    .modal .btn-secondary {
+        --bs-btn-color: var(--bs-secondary-color);
+        --bs-btn-bg: transparent;
+        --bs-btn-border-color: var(--bs-border-color);
+        --bs-btn-hover-color: var(--bs-body-color);
+        --bs-btn-hover-bg: var(--bs-tertiary-bg);
+        --bs-btn-hover-border-color: var(--bs-border-color);
+        --bs-btn-active-color: var(--bs-body-color);
+        --bs-btn-active-bg: var(--bs-secondary-bg);
+        --bs-btn-active-border-color: var(--bs-border-color);
+    }
+
+    /* row actions ("...") dropdown: AdminLTE's dropdown font size, destructive actions in red */
+    .datagrid .dropdown-actions .dropdown-menu {
+        --bs-dropdown-font-size: 1rem;
+        font-size: 1rem;
+    }
+
+    .datagrid .dropdown-actions .dropdown-item {
+        align-items: center;
+        display: flex;
+        font-size: inherit;
+        gap: 0.5rem;
+    }
+
+    .datagrid .dropdown-actions .dropdown-item-variant-danger {
+        color: var(--bs-danger);
+    }
+
+    /* detail page as an AdminLTE bordered table (crud/detail.html.twig): undo EasyAdmin's flex layout of
+       ".ea-detail .field-group" and its small, right-aligned labels */
+    .ea-detail .detail-table tr.field-group {
+        display: table-row;
+        margin: 0;
+    }
+
+    .ea-detail .detail-table th.field-label {
+        color: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: start;
+        white-space: nowrap;
+        width: 25%;
+    }
+
+    .ea-detail .detail-table td.field-value a:not(.btn) {
+        text-decoration: none;
+    }
+
+    .ea-detail .detail-table td.field-value {
+        inline-size: auto;
+        min-inline-size: 0;
+        text-align: start;
+    }
+
+    /* form/detail tabs (FormField::addTab()): plain Bootstrap/AdminLTE ".nav-tabs" instead of EasyAdmin's
+       underline tabs with an animated indicator */
+    .app-content .form-tabs-tablist {
+        box-shadow: none;
+    }
+
+    .app-content .form-tabs-tablist .nav-tabs {
+        flex: 1;
+        padding-bottom: 0;
+    }
+
+    /* EasyAdmin reserves the width of the bold active label with a hidden ::before copy of the label (display: block), which adds an empty line */
+    .app-content .form-tabs-tablist .tab-nav-item-label::before {
+        display: none;
+    }
+
+    .app-content .form-tabs-tablist .nav-tabs::after,
+    .app-content .form-tabs-tablist .nav-tabs .nav-link::after {
+        display: none;
+    }
+
+    .app-content .form-tabs-tablist .nav-tabs .nav-link {
+        padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
+    }
+
+    .app-content .form-tabs-tablist .nav-tabs .nav-link.active {
+        background-color: var(--bs-nav-tabs-link-active-bg);
+        border-color: var(--bs-nav-tabs-link-active-border-color);
+        font-weight: inherit;
+    }
+
+    /* filters modal: the filter names are collapse toggles, not text links */
+    #modal-filters .filter-heading a {
+        text-decoration: none;
+    }
+
+    /* EasyAdmin's error page (exception.html.twig): AdminLTE's base "h1" styles would override its red,
+       medium-sized title; AdminLTE-like alert box instead of EasyAdmin's tall centered block */
+    body.error .error-message {
+        background-color: var(--bs-body-bg);
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        border-left: 0.25rem solid var(--bs-danger);
+        border-radius: var(--bs-border-radius);
+        box-shadow: var(--bs-box-shadow-sm);
+        margin-top: 1rem;
+        max-inline-size: 40rem;
+        min-block-size: 0;
+        padding: 1.25rem 1.5rem;
+    }
+
+    body.error .error-message h1 {
+        align-items: center;
+        color: var(--bs-danger);
+        display: flex;
+        font-size: 1.5rem;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    /* checkbox, switch and radio labels: AdminLTE's base font size (EasyAdmin uses a smaller one) */
+    .app-content .form-check-label {
+        font-size: 1rem;
+    }
+
+    /* EasyAdmin's own prefix/suffix addons (MoneyField, PercentField...): EasyAdmin draws the border on the
+       ".ea-input-group" wrapper (30px tall) around a borderless input; sized and colored like AdminLTE's input groups */
+    .app-content .form-widget .ea-input-group {
+        align-items: stretch;
+        background-color: var(--bs-body-bg);
+        block-size: auto;
+        border-color: var(--bs-border-color);
+        border-radius: var(--bs-border-radius);
+        box-shadow: none;
+        overflow: hidden;
+    }
+
+    .app-content .form-widget .ea-input-group input.form-control {
+        block-size: auto;
+    }
+
+    .app-content .form-widget .ea-input-group .ea-input-addon {
+        background-color: var(--bs-tertiary-bg);
+        color: var(--bs-body-color);
+        font-size: 1rem;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .app-content .form-widget .ea-input-group .ea-input-addon-prepend {
+        border-inline-end: var(--bs-border-width) solid var(--bs-border-color);
+    }
+
+    .app-content .form-widget .ea-input-group .ea-input-addon-append {
+        border-inline-start: var(--bs-border-width) solid var(--bs-border-color);
+    }
+}
